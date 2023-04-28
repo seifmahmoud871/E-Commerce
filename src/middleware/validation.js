@@ -31,21 +31,29 @@ export const generalFields = {
 }
 
 export const validation = (schema) => {
-    return (req, res, next) => {
-        console.log({body:req.body});
-        const validationErr = []
-        dataMethods.forEach(key => {
-            if (schema[key]) {
-                const validationResult = schema[key].validate(req[key], { abortEarly: false })
-                if (validationResult.error) {
-                    validationErr.push(validationResult.error.details)
-                }
-            }
-        });
 
-        if (validationErr.length) {
-            return res.json({ message: "Validation Err", validationErr })
+    return (req, res, next) => {
+
+        console.log({schema});
+        const inputs = { ...req.body, ...req.params, ...req.query };
+
+        // if (req.headers.authorization) {
+        //     inputs.authorization = req.headers.authorization;
+        // }
+
+        if (req.file || req.files) {
+            inputs.file = req.file || req.files;
         }
-        return next()
+        console.log({inputs});
+        // console.log(schema.validate(inputs));
+        const validationResult = schema.validate(inputs, { abortEarly: false });
+        console.log("error: " ,validationResult.error);
+        if (validationResult.error) {
+            return res.status(400).json({
+                message: "Validation Error",
+                validationResult: validationResult.error.details,
+            })
+        }
+        return next();
     }
 }

@@ -9,6 +9,7 @@ import productRouter from './modules/product/product.router.js'
 import reviewsRouter from './modules/reviews/reviews.router.js'
 import subcategoryRouter from './modules/subcategory/subcategory.router.js'
 import userRouter from './modules/user/user.router.js'
+import { globalEerrorHandling } from './utils/errorHandling.js'
 
 
 
@@ -30,7 +31,8 @@ const initApp = (app, express) => {
     app.all('*', (req, res, next) => {
         res.send("In-valid Routing Plz check url  or  method")
     })
-    connectDB()
+    connectDB();
+    app.use(globalEerrorHandling);
 
 }
 
