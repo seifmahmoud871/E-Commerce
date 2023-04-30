@@ -40,6 +40,13 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+    forgetCode:{
+        type:Number,
+        default:null
+    },
+    changePasswordTime:{
+        type:Date,
+    },
     image: String,
     DOB: String,
 }, {

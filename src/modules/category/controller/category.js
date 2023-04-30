@@ -6,7 +6,7 @@ import slugify from "slugify";
 export const createCategory=async(req,res,next)=>{
 
      
-    const{name}= req.body;
+    const name= req.body.name.toLowerCase();
     console.log({name});
     const {secure_url,public_id} = await cloudinary.uploader.upload(req.file.path,{folder:`${process.env.APP_NAME}/category`});
     console.log({name,secure_url,public_id});
@@ -27,6 +27,13 @@ export const updateCategory =async (req,res,next)=>{
         }
        
         if(req.body.name){
+            req.body.name=req.body.name.toLowerCase();
+            if(category.name==req.body.name){
+                return next(new Error({message:"Sorry can not update category with same name",cause:400}));
+            }
+            if(await categoryModel.findOne({name:req.body.name})){
+                return next(new Error({ message: `Duplicate category ${req.body.name}`, cause: 409 }));
+            }
             category.name=req.body.name;
             category.slug= slugify(req.body.name,'_');
         }

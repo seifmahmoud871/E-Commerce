@@ -9,7 +9,7 @@ export const asyncHandler =(fn)=>{
     }
 }
 
-export const globalEerrorHandling=(err,req,res,next)=>{
+export const globalErrorHandling=(err,req,res,next)=>{
 
     if(err){
         if(process.env.MOOD=="DEV"){

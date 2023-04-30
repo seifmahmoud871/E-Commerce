@@ -17,6 +17,7 @@ export const generalFields = {
     password: joi.string().pattern(new RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)).required(),
     cPassword: joi.string().required(),
     id: joi.string().custom(validateObjectId).required(),
+    optionalId: joi.string().custom(validateObjectId),
     file: joi.object({
         size: joi.number().positive().required(),
         path: joi.string().required(),

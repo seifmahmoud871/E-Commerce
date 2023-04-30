@@ -5,6 +5,8 @@ const categorySchema = new Schema({
     name: {
         type: String,
         required: true,
+        unique: true,
+        lowercase:true
     },
     slug: {
         type: String,
@@ -12,7 +14,7 @@ const categorySchema = new Schema({
     },
     image: {
         type: Object,
-        required:true
+        required: true
     },
     createdBy: {
         type: Types.ObjectId,
@@ -30,14 +32,14 @@ const categorySchema = new Schema({
     }
 }, {
     timestamps: true,
-    toJSON:{virtuals:true},
-    toObject:{virtuals:true}
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
 });
 
-categorySchema.virtual('subcategory',{
-    localField:'_id',
-    foreignField:'categoryId',
-    ref:'Subcategory'
+categorySchema.virtual('subcategory', {
+    localField: '_id',
+    foreignField: 'categoryId',
+    ref: 'Subcategory'
 })
 
 
