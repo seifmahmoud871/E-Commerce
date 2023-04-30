@@ -1,12 +1,17 @@
 import { Router } from "express";
-const router = Router()
+import * as orderController from "./controller/order.js";
+import { asyncHandler } from "../../utils/errorHandling.js";
+import {auth} from "../../middleware/auth.js";
+import {endPoint} from "./order.endPoint.js"
+import { validation } from "../../middleware/validation.js";
+import * as validators from "./order.validation.js"
+const router = Router();
 
 
 
 
-router.get('/', (req ,res)=>{
-    res.status(200).json({message:"order Module"})
-})
+
+router.post('/',auth(endPoint.create),validation(validators.createOrder),asyncHandler(orderController.createOrder));
 
 
 

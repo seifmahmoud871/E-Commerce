@@ -5,7 +5,9 @@ const couponSchema = new Schema({
     name: {
         type: String,
         required: true,
-        unique:true
+        unique:true,
+        trim:true,
+        lowercase:true
     },
     image: {
         type: Object,
@@ -31,6 +33,10 @@ const couponSchema = new Schema({
     amount:{
         type:Number,
         default:1,
+        required:true
+    },
+    expiredDate:{
+        type:Date,
         required:true
     }
 }, {

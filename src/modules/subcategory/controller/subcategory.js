@@ -16,12 +16,13 @@ export const createSubCategory = async (req, res, next) => {
 
     const customId = nanoid();
 
-    const { name } = req.body;
+    const  name  = req.body.name.toLowerCase();
     const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, { folder: `${process.env.APP_NAME}/category/${categoryId}/${customId}` });
     console.log({ name, secure_url, public_id });
     const subcategory = await subcategoryModel.create({
         name: name,
-        image: { secure_url, public_id }, slug: slugify(name, "_"), categoryId, customId
+        image: { secure_url, public_id }, slug: slugify(name, "_"), categoryId, customId,
+        createdBy:req.user._id,
     });
 
     return res.status(201).json({ message: "Done", subcategory });
@@ -34,11 +35,17 @@ export const updateSubCategory = async (req, res, next) => {
     
     const subcategory = await subcategoryModel.findOne({categoryId,_id:subcategoryId});
     if (!subcategory) {
-
         return next(new Error({ message: "In-valid SubcategoryId", cause: 400 }));
     }
 
     if (req.body.name) {
+        req.body.name=req.body.name.toLowerCase();
+        if(subcategory.name==req.body.name){
+            return next(new Error({message:"Sorry can not update subcategory with same name",cause:400}));
+        }
+        if(await subcategoryModel.findOne({name:req.body.name})){
+            return next(new Error({ message: `Duplicate subcategory ${req.body.name}`, cause: 409 }));
+        }
         subcategory.name = req.body.name;
         subcategory.slug = slugify(req.body.name, '_');
     }
@@ -53,6 +60,7 @@ export const updateSubCategory = async (req, res, next) => {
     }
 
     console.log({ subcategory });
+    subcategory.uodatedBy=req.user._id;
     await subcategory.save();
 
     return res.status(200).json({ message: "Done", subcategory })

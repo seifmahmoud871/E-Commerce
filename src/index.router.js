@@ -1,3 +1,4 @@
+import morgan from 'morgan'
 import connectDB from '../DB/connection.js'
 import authRouter from './modules/auth/auth.router.js'
 import branRouter from './modules/brand/brand.router.js'
@@ -9,11 +10,18 @@ import productRouter from './modules/product/product.router.js'
 import reviewsRouter from './modules/reviews/reviews.router.js'
 import subcategoryRouter from './modules/subcategory/subcategory.router.js'
 import userRouter from './modules/user/user.router.js'
-import { globalEerrorHandling } from './utils/errorHandling.js'
+import { globalErrorHandling } from './utils/errorHandling.js'
 
 
 
 const initApp = (app, express) => {
+    if(process.env.MOOD){
+        app.use(morgan("dev"))
+    }
+    else{
+        app.use(morgan("combined"))
+    }
+
     //convert Buffer Data
     app.use(express.json({}))
     //Setup API Routing 
@@ -32,7 +40,7 @@ const initApp = (app, express) => {
         res.send("In-valid Routing Plz check url  or  method")
     })
     connectDB();
-    app.use(globalEerrorHandling);
+    app.use(globalErrorHandling);
 
 }
 

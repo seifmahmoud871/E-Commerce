@@ -6,6 +6,7 @@ import slugify from "slugify";
 export const createCoupon = async (req, res, next) => {
 
     const { name, amount } = req.body;
+    name=name.toLowerCase();
     console.log({name,amount});
     if (await couponModel.findOne({ name })) {
         return next(new Error("Duplicate Coupon name", { coase: 409 }));
@@ -17,8 +18,11 @@ export const createCoupon = async (req, res, next) => {
 
     const coupon = await couponModel.create({
         name: name,
-        image: req.image, amount
+        image: req.image, amount,
+        createdBy:req.user._id,
+        expiredDate:new Date(req.body.expiredDate),
     });
+  
 
     return res.status(201).json({ message: "Done", coupon });
 
@@ -31,6 +35,7 @@ export const updateCoupon = async (req, res, next) => {
     if (!coupon) {
         return next(new Error({ message: "In-valid couponId", cause: 400 }));
     }
+    name=name.toLowerCase();
 
     if (name) {
         if (await couponModel.findOne({ name })) {
@@ -56,6 +61,10 @@ export const updateCoupon = async (req, res, next) => {
     if(amount){
         coupon.amount=amount;
     }
+    if(req.body.expiredDate){
+        coupon.expiredDate=new Date(req.body.expiredDate);
+    }
+    coupon.updatedBy=req.user._id;
     console.log({ coupon });
     await coupon.save();
 
